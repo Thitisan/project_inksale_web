@@ -1,6 +1,6 @@
 <template>
   <div>
-    <caption>Invoice NO: {{IVN}}</caption>
+    <caption>Invoice NO: {{invoiceNo}}</caption>
     <div>
       <b-table-simple>
         <b-thead head-variant="dark">
@@ -17,23 +17,22 @@
           <b-tr>
             <b-th>{{index+1}}</b-th>
             <b-th>
-              <b-form-select v-model="billlist.ink_id" signle-line label="Filter">
+              <b-form-select v-model="billlist.ink" signle-line label="Filter">
               <b-form-select-option value="">Please select a ink</b-form-select-option>
-              <b-form-select-option v-for="ink in inks" :key="ink.ink_id" :value="ink.ink_id">{{ink.ink_name}}</b-form-select-option>
+              <b-form-select-option v-for="ink in inks" :key="ink.ink_id" :value="{ink_id:ink.ink_id,ink_price:ink.ink_price}">{{ink.ink_name}}</b-form-select-option>
               </b-form-select>
             </b-th>
             <b-th>
-              {{billlist.ink_price}}
+              {{billlist.ink.ink_price}}
             </b-th>
             <b-th>
               <b-form-input  v-model="billlist.amount"></b-form-input>
             </b-th>
             <b-th>
-              {{billlist.ink_price*billlist.amount}}
+              {{billlist.ink.ink_price*billlist.amount}}
             </b-th>
             <b-th>
-              <b-button variant="outline-primary" @click="edit()">Edit</b-button>
-              <b-button variant="outline-primary" @click="Delete()">Delete</b-button>
+
             </b-th>
           </b-tr>
         </b-tbody>
@@ -72,6 +71,12 @@ export default {
       IVN:'',
       countTables:1,
       billlists:[],
+      billdetail:[],
+      sumprices:'',
+      seller_id:'',
+      customer_id:'',
+      invoiceNo:'',
+      invoice_id:'',
     }
   },
   created(){
@@ -83,7 +88,7 @@ export default {
     var sum =0
     for(const billlist of this.billlists){
       console.log('loop sum test',billlist.amount*billlist.ink_price)
-      sum = (billlist.amount*billlist.ink_price)+sum
+      sum = (billlist.amount*billlist.ink.ink_price)+sum
     }
     return sum
   }
@@ -92,10 +97,13 @@ export default {
   methods:{
     async getData() {
 
-          this.IVN = this.$route.query.invoiceNo
-          let seller = await this.$http.get('/sellers')
-          this.sellers = seller.data.data
-          console.log("data sellers :" ,this.sellers)
+          let billdetail = await this.$http.get(`/invoice?invoiceNo=${this.$route.query.invoiceNo}`)
+          this.billdetail = billdetail.data.data
+          this.seller_id = billdetail.data.data[0].seller_id
+          this.customer_id = billdetail.data.data[0].customeid
+          this.invoiceNo = billdetail.data.data[0].invoiceNo
+          this.invoice_id = billdetail.data.data[0].invoicenumber_id
+          console.log("data billdetail:" ,this.billdetail)
 
           let ink = await this.$http.get('/inks')
           this.inks = ink.data.data
@@ -112,18 +120,19 @@ export default {
         // console.log('loop',billlist.ink.ink_name)
           await this.$http.post('/bills/create', {
                 invoicenumber_id:this.$route.query.invoiceId,
-                ink_id:billlist.ink_id,
+                ink_id:billlist.ink.ink_id,
                 amount:billlist.amount,
             })
       }
+      await this.$http.put(`/invoice/update/${this.$route.query.invoiceId}`, {
+                invoicenumber_id:this.$route.query.invoiceId,
+                seller_id:this.seller_id,
+                customer_id:this.customer_id,
+                sum_price:this.sumprice
+            })
 
-      this.$router.push({path:'.'})
-      // this.billlists.forEach(element => {
-      //   console.log("show list",element.ink.ink_name)
-      //   console.log("show query",this.$route.query.invoiceId)
+      this.$router.push({path:'/'})
 
-
-      // });
 
     },
     addtable(){

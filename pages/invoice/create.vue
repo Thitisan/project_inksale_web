@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>invoice create page</h1>
+    <p>เลือก customer</p>
     <b-form-select v-model="customer_select" signle-line label="Filter">
       <b-form-select-option value="">Please select a customer</b-form-select-option>
       <b-form-select-option v-for="customer in customers" :key="customer.customer_id" :value="customer.customer_id">{{customer.customer_name}}</b-form-select-option>

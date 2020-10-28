@@ -34,7 +34,7 @@
               {{billlist.ink_price*billlist.amount}}
             </b-th>
             <b-th>
-              <b-button variant="outline-primary" @click="Delete()">Delete</b-button>
+
             </b-th>
           </b-tr>
         </b-tbody>
@@ -52,9 +52,10 @@
           </b-tr>
         </b-tfoot>
       </b-table-simple>
+
     </div>
 
-    <b-button variant="outline-primary" @click="addbill()">Add bill</b-button>
+    <b-button variant="outline-primary" @click="addbill()">Edit bill</b-button>
   </div>
 </template>
 
@@ -125,8 +126,13 @@ export default {
                 amount:billlist.amount,
             })
       }
-
-      this.$router.push({path:'.'})
+      // await this.$http.put(`/invoice/update/${this.invoice_id}`, {
+      //           invoicenumber_id:this.invoice_id,
+      //           seller_id:this.seller_id,
+      //           customer_id:this.customer_id,
+      //           sum_price:this.sumprice
+      //       })
+      this.$router.push({path:'/'})
 
 
     },
@@ -136,11 +142,7 @@ export default {
     distable(){
       this.billlists.pop()
     },
-    sumprice(){
-      for(const billlist of this.billlists){
-      console.log('test sum',billlist)
-    }
-    }
+
   }
 }
 </script>

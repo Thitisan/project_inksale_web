@@ -6,6 +6,7 @@
         <b-link @click="viewList(billlist.invoiceNo)">{{ billlist.invoiceNo }}</b-link>
         <p>customer: {{billlist.customer_name}}</p>
         <p>seller: {{billlist.seller_name}}</p>
+        <p>sum price: {{billlist.sum_price}}</p>
       </li>
     </ul>
 
