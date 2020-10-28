@@ -23,13 +23,13 @@
               </b-form-select>
             </b-th>
             <b-th>
-              {{billlist.ink.ink_price}}
+              {{billlist.ink_price}}
             </b-th>
             <b-th>
               <b-form-input  v-model="billlist.amount"></b-form-input>
             </b-th>
             <b-th>
-              {{billlist.ink.ink_price*billlist.amount}}
+              {{billlist.ink_price*billlist.amount}}
             </b-th>
             <b-th>
               <b-button variant="outline-primary" @click="edit()">Edit</b-button>
@@ -40,7 +40,7 @@
         <b-tfoot>
           <b-tr>
             <b-td colspan="7" variant="secondary" class="text-right">
-              Total price: <b>5</b>
+              Total price: <b>{{sumprice}}</b>
             </b-td>
           </b-tr>
           <b-tr>
@@ -76,6 +76,17 @@ export default {
   },
   created(){
     this.getData()
+
+  },
+  computed:{
+  sumprice:function(){
+    var sum =0
+    for(const billlist of this.billlists){
+      console.log('loop sum test',billlist.amount*billlist.ink_price)
+      sum = (billlist.amount*billlist.ink_price)+sum
+    }
+    return sum
+  }
 
   },
   methods:{

@@ -17,7 +17,7 @@
         </b-thead>
         <b-tbody v-for="(billlist,index) in billlists" :key="billlist.index">
           <b-tr>
-            <b-th>{{index+1}} {{billlist.bill_id}}</b-th>
+            <b-th>{{index+1}}</b-th>
             <b-th>
               <b-form-select v-model="billlist.ink_id" signle-line label="Filter">
               <b-form-select-option value="">Please select a ink</b-form-select-option>
@@ -25,13 +25,13 @@
               </b-form-select>
             </b-th>
             <b-th>
-
+              {{billlist.ink_price}}
             </b-th>
             <b-th>
               <b-form-input  v-model="billlist.amount"></b-form-input>
             </b-th>
             <b-th>
-
+              {{billlist.ink_price*billlist.amount}}
             </b-th>
             <b-th>
               <b-button variant="outline-primary" @click="Delete()">Delete</b-button>
@@ -41,7 +41,7 @@
         <b-tfoot>
           <b-tr>
             <b-td colspan="7" variant="secondary" class="text-right">
-              Total price: <b>5</b>
+              Total price: <b>{{sumprice}}</b>
             </b-td>
           </b-tr>
           <b-tr>
@@ -71,12 +71,25 @@ export default {
       invoiceNo:'',
       invoice_id:'',
       billdetail:[],
-      billlists:[]
+      billlists:[],
+      sum_price:''
     }
   },
   created(){
     this.getData()
     console.log(this.$route.query.id)
+
+
+  },
+  computed:{
+    sumprice:function(){
+      var sum =0
+      for(const billlist of this.billlists){
+        console.log('loop sum test',billlist.amount*billlist.ink_price)
+        sum = (billlist.amount*billlist.ink_price)+sum
+      }
+      return sum
+    }
 
   },
   methods:{
@@ -119,11 +132,14 @@ export default {
     },
     addtable(){
       this.billlists.push({id:"",ink:"",amount:''})
-
-
     },
     distable(){
       this.billlists.pop()
+    },
+    sumprice(){
+      for(const billlist of this.billlists){
+      console.log('test sum',billlist)
+    }
     }
   }
 }
